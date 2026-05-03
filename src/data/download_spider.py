@@ -21,7 +21,7 @@ def download():
         with open(out_path, "w", encoding="utf-8") as f:
             for rec in records:
                 f.write(json.dumps(rec) + "\n")
-        print(f"  Saved {len(records)} records → {out_path}")
+        print(f"  Saved {len(records)} records -> {out_path}")
 
     # Save tables metadata
     tables_path = RAW_DIR / "tables.json"

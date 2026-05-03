@@ -36,7 +36,7 @@ def extract_schema(db_path: Path) -> dict:
         fk_descriptions = []
         for fk in fks:
             # fk: (id, seq, table, from, to, ...)
-            fk_descriptions.append(f"{fk[3]} → {fk[2]}.{fk[4]}")
+            fk_descriptions.append(f"{fk[3]} -> {fk[2]}.{fk[4]}")
 
         table_text = f"Table: {table}\n  Columns: {', '.join(col_descriptions)}"
         if fk_descriptions:
@@ -81,7 +81,7 @@ def extract_all() -> list[dict]:
         for doc in all_docs:
             f.write(json.dumps(doc) + "\n")
 
-    print(f"Extracted {len(all_docs)} table documents from {len(db_files)} databases → {out_path}")
+    print(f"Extracted {len(all_docs)} table documents from {len(db_files)} databases -> {out_path}")
     return all_docs
 
 

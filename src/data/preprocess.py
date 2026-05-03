@@ -56,7 +56,7 @@ def process_split(split_name: str) -> int:
             fout.write(json.dumps(instruct_rec) + "\n")
             count += 1
 
-    print(f"  {split_name}: {count} records → {dst}")
+    print(f"  {split_name}: {count} records -> {dst}")
     return count
 
 
