@@ -1,0 +1,11 @@
+# Install in WSL2 Ubuntu 22.04 only — Unsloth Triton kernels don't run on Windows
+torch==2.1.1+cu118
+# Install unsloth from git:
+# pip install "unsloth[cu118-ampere-torch211] @ git+https://github.com/unslothai/unsloth.git"
+transformers==4.40.2
+peft==0.10.0
+trl==0.8.6
+bitsandbytes==0.43.1
+accelerate==0.29.3
+datasets==2.19.1
+mlflow==2.13.0

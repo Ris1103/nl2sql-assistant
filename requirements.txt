@@ -1,0 +1,15 @@
+datasets>=3.2.0
+chromadb>=0.5.23
+mlflow>=2.13.0
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+streamlit>=1.35.0
+reportlab>=4.1.0
+matplotlib>=3.9.0
+sqlparse>=0.5.0
+requests>=2.31.0
+pandas>=2.2.2
+numpy>=2.0.0
+pydantic>=2.7.1
+python-dotenv>=1.0.1
+pyarrow>=18.0.0

@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data (large files — re-download with download_spider.py)
+data/raw/
+data/databases/
+data/processed/*.jsonl
+
+# MLflow tracking
+mlruns/
+
+# ChromaDB
+chroma_db/
+
+# LoRA adapters (large model files)
+adapters/
+
+# GGUF / model weights
+*.gguf
+*.bin
+*.safetensors
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Reports / output PDFs
+*.pdf
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
