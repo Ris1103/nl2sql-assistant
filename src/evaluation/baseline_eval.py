@@ -12,18 +12,19 @@ from src.evaluation.metrics import compute_metrics
 OLLAMA_URL = "http://localhost:11434"
 MODEL = "phi3:mini"
 VAL_FILE = Path(__file__).parents[2] / "data" / "processed" / "val_instruct.jsonl"
-MLFLOW_TRACKING_URI = str(Path(__file__).parents[2] / "mlruns")
+MLFLOW_TRACKING_URI = (Path(__file__).parents[2] / "mlruns").as_uri()  # as_uri() avoids Windows drive letter being misread as URI scheme
 EXPERIMENT_NAME = "nl2sql-baseline"
-MAX_SAMPLES = None  # set to int to limit for quick runs
+MAX_SAMPLES = 100  # set to None to run the full 1,034-example val set
 
 
-def generate_sql(instruction: str, input_text: str) -> tuple[str, float]:
+def generate_sql(instruction: str, input_text: str, timeout: int = 300) -> tuple[str, float]:
     prompt = f"{instruction}\n\n{input_text}\n\nSQL:"
     start = time.time()
     response = requests.post(
         f"{OLLAMA_URL}/api/generate",
-        json={"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0}},
-        timeout=60,
+        # num_gpu=20 offloads 20 layers to GTX 1650 (4GB VRAM); num_ctx=2048 keeps KV cache small enough to fit
+        json={"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0, "num_gpu": 20, "num_ctx": 2048}},
+        timeout=timeout,  # cold model load on first call can exceed 60s
     )
     response.raise_for_status()
     elapsed = (time.time() - start) * 1000
@@ -56,7 +57,11 @@ def run_baseline():
         mlflow.log_param("temperature", 0)
 
         for i, rec in enumerate(records):
-            predicted, latency_ms = generate_sql(rec["instruction"], rec["input"])
+            try:
+                predicted, latency_ms = generate_sql(rec["instruction"], rec["input"])
+            except Exception as e:
+                print(f"  WARNING: skipping example {i}: {e}")
+                predicted, latency_ms = "", 0.0
             latencies.append(latency_ms)
 
             # Extract db_id and gold SQL from the input/output fields
@@ -68,7 +73,7 @@ def run_baseline():
             })
 
             if (i + 1) % 50 == 0:
-                print(f"  {i + 1}/{len(records)}")
+                print(f"  {i + 1}/{len(records)}", flush=True)
 
         metrics = compute_metrics(predictions)
         metrics["avg_latency_ms"] = sum(latencies) / len(latencies)

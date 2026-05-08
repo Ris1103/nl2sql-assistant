@@ -40,7 +40,9 @@ def build_collection(batch_size: int = 50) -> chromadb.Collection:
         batch = docs[i : i + batch_size]
         texts = [d["text"] for d in batch]
         embeddings = embed_batch(texts)
-        collection.add(
+        # Re-fetch collection each batch to avoid stale reference in ChromaDB Rust backend
+        col = client.get_collection(COLLECTION_NAME)
+        col.add(
             ids=[d["doc_id"] for d in batch],
             embeddings=embeddings,
             documents=texts,

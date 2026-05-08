@@ -13,7 +13,7 @@ from src.rag.retriever import build_schema_context
 OLLAMA_URL = "http://localhost:11434"
 MODEL = "phi3-nl2sql"  # Ollama model name after GGUF export
 VAL_FILE = Path(__file__).parents[2] / "data" / "processed" / "val_instruct.jsonl"
-MLFLOW_TRACKING_URI = str(Path(__file__).parents[2] / "mlruns")
+MLFLOW_TRACKING_URI = (Path(__file__).parents[2] / "mlruns").as_uri()  # as_uri() avoids Windows drive letter being misread as URI scheme
 EXPERIMENT_NAME = "nl2sql-finetuning"
 USE_RAG = True
 MAX_SAMPLES = None
