@@ -64,7 +64,8 @@ CLAUDE.md
 *.log
 
 # Temp / scratch scripts
-test_imports.py
+test_*.py
+scratch_*.py
 
 # Unsloth compilation cache
 unsloth_compiled_cache/
