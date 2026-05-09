@@ -13,6 +13,10 @@ build/
 .venv/
 venv/
 env/
+.venv-wsl/
+venv-wsl/
+.venv-*/
+venv-*/
 
 # Data (large files — re-download with download_spider.py)
 data/raw/
@@ -52,6 +56,15 @@ Thumbs.db
 .vscode/
 .idea/
 
-#claude
-claude/
+# Claude assistant files
+.claude/
 CLAUDE.md
+
+# Logs
+*.log
+
+# Temp / scratch scripts
+test_imports.py
+
+# Unsloth compilation cache
+unsloth_compiled_cache/

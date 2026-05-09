@@ -29,6 +29,7 @@ class TrainingConfig:
     gradient_accumulation_steps: int = 4
     gradient_checkpointing: bool = True
     num_train_epochs: int = 3
+    max_steps: int = -1  # -1 means train for full num_train_epochs
     warmup_steps: int = 100
     learning_rate: float = 2e-4
     weight_decay: float = 0.01
@@ -38,7 +39,7 @@ class TrainingConfig:
     fp16: bool = False
     logging_steps: int = 10
     eval_steps: int = 200
-    save_steps: int = 500
+    save_steps: int = 200
     save_total_limit: int = 2
 
     train_file: str = "./data/processed/train_instruct.jsonl"

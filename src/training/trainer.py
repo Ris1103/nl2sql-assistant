@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+# unsloth must be imported before trl/transformers to apply its optimizations
+import unsloth  # noqa: F401
 import mlflow
 import yaml
 from datasets import Dataset
@@ -67,6 +69,7 @@ def train(config_path: str = str(CONFIG_PATH)):
         gradient_accumulation_steps=cfg.gradient_accumulation_steps,
         gradient_checkpointing=cfg.gradient_checkpointing,
         num_train_epochs=cfg.num_train_epochs,
+        max_steps=cfg.max_steps,
         warmup_steps=cfg.warmup_steps,
         learning_rate=cfg.learning_rate,
         weight_decay=cfg.weight_decay,
@@ -76,9 +79,9 @@ def train(config_path: str = str(CONFIG_PATH)):
         fp16=cfg.fp16,
         logging_steps=cfg.logging_steps,
         eval_steps=cfg.eval_steps,
-        save_steps=cfg.save_steps,
+        save_steps=cfg.eval_steps,  # must be a multiple of eval_steps when load_best_model_at_end=True
         save_total_limit=cfg.save_total_limit,
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
         greater_is_better=False,
