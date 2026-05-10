@@ -57,7 +57,10 @@ def convert_to_gguf():
 
     # Quantize to Q4_K_M
     gguf_q4 = GGUF_DIR / "phi3-nl2sql-q4_k_m.gguf"
-    quantize_bin = LLAMA_CPP_DIR / "build" / "bin" / "quantize"
+    # llama.cpp renamed the binary to llama-quantize in newer versions
+    quantize_bin = LLAMA_CPP_DIR / "build" / "bin" / "llama-quantize"
+    if not quantize_bin.exists():
+        quantize_bin = LLAMA_CPP_DIR / "build" / "bin" / "quantize"
     if not quantize_bin.exists():
         quantize_bin = LLAMA_CPP_DIR / "quantize"
 
