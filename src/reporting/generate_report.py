@@ -21,7 +21,7 @@ from reportlab.platypus import (
 )
 
 
-MLFLOW_URI = str(Path(__file__).parents[2] / "mlruns")
+MLFLOW_URI = (Path(__file__).parents[2] / "mlruns").as_uri()
 DARK_BLUE = colors.HexColor("#1a237e")
 MID_BLUE = colors.HexColor("#1565c0")
 ACCENT = colors.HexColor("#e3f2fd")
