@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 
 
-DB_DIR = Path(__file__).parents[2] / "data" / "databases"
+DB_DIR = Path(__file__).parents[2] / "data" / "databases" / "spider_data" / "spider_data" / "database"
 
 
 def exact_match(predicted: str, gold: str) -> bool:
