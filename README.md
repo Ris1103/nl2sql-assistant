@@ -14,6 +14,7 @@ Full lifecycle LLM engineering project: fine-tuned Phi-3 mini 3.8B + QLoRA + RAG
 | LLMOps | MLflow (experiments, metrics, artifacts) |
 | Serving | FastAPI + Ollama (GGUF Q4_K_M) |
 | Frontend | Streamlit |
+| Cloud inference | Groq API (llama-3.1-70b / mixtral) |
 | Report | ReportLab PDF |
 
 ## Hardware Requirements
@@ -65,7 +66,7 @@ python -m src.serving.export_to_gguf
 python -m src.evaluation.finetuned_eval  # Logs to MLflow: nl2sql-finetuning
 ```
 
-### Phase 6 — Serve
+### Phase 6 — Serve (local, four terminals)
 
 ```powershell
 # Terminal 1
@@ -84,7 +85,7 @@ streamlit run src/serving/ui.py --server.port 8501
 python -m src.reporting.generate_report --output nl2sql_project_report.pdf
 ```
 
-## Service URLs
+## Service URLs (local)
 
 | Service | URL |
 |---------|-----|
@@ -93,12 +94,65 @@ python -m src.reporting.generate_report --output nl2sql_project_report.pdf
 | MLflow UI | http://localhost:5000 |
 | Ollama | http://localhost:11434 |
 
-## Expected Results
+## Deployment (Streamlit Cloud + ngrok)
 
-| Metric | Baseline (zero-shot) | Fine-tuned + RAG |
-|--------|---------------------|------------------|
-| Exact Match Accuracy | ~50% | ~70–75% |
-| Execution Accuracy | ~55% | ~72–78% |
+The UI supports two inference backends switchable at runtime from the sidebar.
+
+### Backend modes
+
+| Mode | How it works | Requirements |
+|------|-------------|--------------|
+| **Local (phi3-nl2sql)** | Streamlit → ngrok tunnel → local FastAPI → Ollama | ngrok authtoken, local PC running |
+| **Groq (cloud)** | Streamlit → Groq API directly | Groq API key (free tier available) |
+
+### Deploy the UI on Streamlit Cloud
+
+1. Push this repo to GitHub.
+2. Go to [share.streamlit.io](https://share.streamlit.io) → New app → select `src/serving/ui.py`.
+3. Under **App Settings → Secrets**, add:
+   ```toml
+   GROQ_API_KEY = "gsk_..."
+   ```
+4. Deploy. The UI is now live with Groq mode working out of the box.
+
+### Run local mode with ngrok
+
+When you want to use the fine-tuned phi3-nl2sql model from the deployed UI:
+
+1. Install ngrok and add your authtoken:
+   ```powershell
+   # One-time setup
+   ngrok config add-authtoken <your-token>   # get token at dashboard.ngrok.com
+   ```
+
+2. Start all local services with a single command:
+   ```powershell
+   python -m src.serving.local_startup
+   ```
+   This starts Ollama, FastAPI, and an ngrok tunnel, then prints:
+   ```
+   ====================================================
+     PUBLIC URL:  https://xxxx-xx-xx-xx-xx.ngrok-free.app
+   ====================================================
+   ```
+
+3. In the Streamlit UI, switch to **Local (phi3-nl2sql)** mode and paste the URL into the **API URL** field.
+
+4. Press Ctrl+C in the terminal to stop all services.
+
+### Groq mode notes
+
+- SQL **execution** is not available in Groq mode — the Spider SQLite databases live only on your local machine.
+- The Groq API key can also be entered directly in the sidebar if not set in Streamlit secrets.
+- Recommended model: `llama-3.1-70b-versatile` (best accuracy), `llama-3.1-8b-instant` (fastest).
+
+## Results
+
+| Metric | Baseline (zero-shot phi3:mini) | Fine-tuned phi3-nl2sql + RAG |
+|--------|-------------------------------|------------------------------|
+| Exact Match Accuracy | — | 5.0% |
+| Execution Accuracy | — | 28.0% |
+| Avg Latency | — | ~11s (GTX 1650) |
 
 ## Training Notes
 
