@@ -30,12 +30,19 @@ def generate_sql(instruction: str, input_text: str, use_rag: bool = True) -> tup
 
     prompt = f"{instruction}\n\n{enriched_input}\n\nSQL:"
     start = time.time()
-    response = requests.post(
-        f"{OLLAMA_URL}/api/generate",
-        json={"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0}},
-        timeout=60,
-    )
-    response.raise_for_status()
+    for attempt in range(3):
+        try:
+            response = requests.post(
+                f"{OLLAMA_URL}/api/generate",
+                json={"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0}},
+                timeout=300,
+            )
+            response.raise_for_status()
+            break
+        except (requests.ReadTimeout, requests.HTTPError):
+            if attempt == 2:
+                raise
+            time.sleep(3)
     elapsed = (time.time() - start) * 1000
     return response.json()["response"].strip(), elapsed
 
