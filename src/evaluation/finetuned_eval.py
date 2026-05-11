@@ -16,7 +16,7 @@ VAL_FILE = Path(__file__).parents[2] / "data" / "processed" / "val_instruct.json
 MLFLOW_TRACKING_URI = (Path(__file__).parents[2] / "mlruns").as_uri()  # as_uri() avoids Windows drive letter being misread as URI scheme
 EXPERIMENT_NAME = "nl2sql-finetuning"
 USE_RAG = True
-MAX_SAMPLES = None
+MAX_SAMPLES = 200
 
 
 def generate_sql(instruction: str, input_text: str, use_rag: bool = True) -> tuple[str, float]:
